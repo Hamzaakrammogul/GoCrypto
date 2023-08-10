@@ -26,6 +26,12 @@ const Welcome = () => {
 
     const handleSubmit = () => {
 
+        const { addressTo, amount, keyword, message } = ctx.formData;
+        e.preventDefault();
+
+        if (!addressTo || !amount || !keyword || !message) return;
+
+        ctx.sendTransaction();
     }
 
     const connectWallet = () => {
@@ -43,13 +49,13 @@ const Welcome = () => {
                         Expore the crypto world. Buy and sell cryptocurrency easily with crypto
                     </p>
 
-                    <button
+                    {!ctx.currentAcc && <button
                         type="button"
                         onClick={ctx.connectWallet}
                         className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
                     >
                         <p className="text-white text-base font-semibold">Connect Wallet</p>
-                    </button>
+                    </button>}
                     <div className=" grid sm:grid-cols-3 grid-cols-2 mt-10">
                         <div className={`rounded-tl-2xl ${commonStyles}`}>
                             Reliability
@@ -97,10 +103,10 @@ const Welcome = () => {
                     </div>
 
                     <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-                        <Input placeholder="Address to" name="addressTo" type="text" handleChange={() => { }} />
-                        <Input placeholder="Amount (ETH)" name="amount" type="number " handleChange={() => { }} />
-                        <Input placeholder="Keyword (gif)" name="keyword" type="text" handleChange={() => { }} />
-                        <Input placeholder="Enter message" name="message" type="text" handleChange={() => { }} />
+                        <Input placeholder="Address to" name="addressTo" type="text" handleChange={() => { ctx.formChangeHandler }} />
+                        <Input placeholder="Amount (ETH)" name="amount" type="number " handleChange={() => { ctx.formChangeHandler }} />
+                        <Input placeholder="Keyword (gif)" name="keyword" type="text" handleChange={() => { ctx.formChangeHandler }} />
+                        <Input placeholder="Enter message" name="message" type="text" handleChange={() => { ctx.formChangeHandler }} />
 
                         <div className="h-[1px] w-full bg-gray-400 my-2" />
                         {isLoading ? (

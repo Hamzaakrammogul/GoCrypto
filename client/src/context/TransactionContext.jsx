@@ -6,29 +6,34 @@ export const TransactionContext = createContext();
 
 const { ethereum } = window;
 
-const getEthereumContract = async () => {
-    let provider;
-
-    if (window.ethereum == null) {
-        console.log("Metamask not installed; using read-only defaults")
-        provider = ethers.getDefaultProvider()
-    } else {
-        provider = new ethers.BrowserProvider(window.ethereum)
-        signer = provider.getSigner();
-    }
-
-    const contract = await new ethers.Contract(contractAddress, ABI, signer);
+const getEthereumContract = () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, ABI, signer);
     console.log({
         provider,
         signer,
         contract
-    })
+    });
 };
 
 
 export const Context = ({ children }) => {
 
-    const [connectedAcc, setConnectedAcc]= useState('');
+    const [connectedAcc, setConnectedAcc] = useState('');
+    const [currentAcc, setCurrentAcc] = useState('');
+    const [formData, setFormData] = useState({
+        addressTp: '',
+        amount: '',
+        keyword: '',
+        message: ''
+    });
+
+
+const formChangeHandler = (e, name) => {
+
+    setFormData((prevStat)=>({...prevStat, [name]: e.target.value}))
+}
 
     const connectWallet = async () => {
         try {
@@ -36,28 +41,57 @@ export const Context = ({ children }) => {
                 return alert("Please install meatmask");
             }
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-           // setCurrentAccount(accounts[0]);
+            setCurrentAcc(accounts[0])
+
         }
         catch (error) {
-            console.log(error);
-           // throw new Error("No ethereum object")
+            if (error.code === 4001) {
+                console.log("Please connect to MetaMask");
+            } else {
+                console.log(error);
+                throw new Error("No thereum Object")
+            }
         }
     };
-    
+
     const checkIfWalletIsConnected = async () => {
-        if (!ethereum) {
-            return alert("Please install teh Metamask");
+        try {
+            if (!ethereum) {
+                return alert("Please install teh Metamask");
+            }
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+            console.log(accounts);
+            if (accounts.length) {
+                setCurrentAcc(accounts[0]);
+            } else {
+                console.log("No Accounts Found!")
+            }
+        } catch (error) {
+            console.log(error);
+            throw new Error("No Ethereum Onject");
         }
-        const account = await ethereum.request({ methods: 'eth_accounts' })
-        console.log(account);
     };
-    
+
+    const sendTransaction = async () => {
+        try {
+            if (!ethereum) alert("Please install metamask");
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
-    //  checkIfWalletIsConnected();
-    }, [])
+        checkIfWalletIsConnected();
+    }, []);
+
     return (
         <TransactionContext.Provider value={{
-            connectWallet
+            connectWallet,
+            currentAcc,
+            formData,
+            setFormData,
+            formChangeHandler
         }}>
             {children}
         </TransactionContext.Provider>
