@@ -2,7 +2,6 @@ import { React, useState, useContext } from "react";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { SiEthereum } from 'react-icons/si';
 import { BsInfoCircle } from 'react-icons/bs';
-import eth from '../../images/ethereum.svg';
 import { Loader } from './'
 import { TransactionContext } from "../context/TransactionContext";
 
@@ -19,24 +18,29 @@ const Input = ({ placeholder, name, type, value, handleChange }) => {
 
 const Welcome = () => {
 
-    const ctx = useContext(TransactionContext);
+    const {
+        connectWallet,
+        currentAcc,
+        formData,
+        setFormData,
+        handleChange,
+        sendTransaction,
+        value} = useContext(TransactionContext);
+
     const [isLoading, setIsLOading] = useState(false);
 
     const commonStyles = 'min-h-[70px] sm:px-0 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-white ';
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
 
-        const { addressTo, amount, keyword, message } = ctx.formData;
-        e.preventDefault();
+        const { addressTo, amount, keyword, message } = formData;
+         e.preventDefault();
 
         if (!addressTo || !amount || !keyword || !message) return;
 
-        ctx.sendTransaction();
+        sendTransaction();
     }
 
-    const connectWallet = () => {
-
-    }
 
     return (
         <div className=" flex w-full justify-center items-centered">
@@ -49,9 +53,9 @@ const Welcome = () => {
                         Expore the crypto world. Buy and sell cryptocurrency easily with crypto
                     </p>
 
-                    {!ctx.currentAcc && <button
+                    {!currentAcc && <button
                         type="button"
-                        onClick={ctx.connectWallet}
+                        onClick={connectWallet}
                         className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
                     >
                         <p className="text-white text-base font-semibold">Connect Wallet</p>
@@ -103,18 +107,18 @@ const Welcome = () => {
                     </div>
 
                     <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-                        <Input placeholder="Address to" name="addressTo" type="text" handleChange={() => { ctx.formChangeHandler }} />
-                        <Input placeholder="Amount (ETH)" name="amount" type="number " handleChange={() => { ctx.formChangeHandler }} />
-                        <Input placeholder="Keyword (gif)" name="keyword" type="text" handleChange={() => { ctx.formChangeHandler }} />
-                        <Input placeholder="Enter message" name="message" type="text" handleChange={() => { ctx.formChangeHandler }} />
+                        <Input placeholder="Address to" name="addressTo" type="text" handleChange={handleChange} />
+                        <Input placeholder="Amount (ETH)" name="amount" type="number " handleChange={handleChange} />
+                        <Input placeholder="Keyword (gif)" name="keyword" type="text" handleChange={handleChange} />
+                        <Input placeholder="Enter message" name="message" type="text" handleChange={handleChange} />
 
                         <div className="h-[1px] w-full bg-gray-400 my-2" />
                         {isLoading ? (
                             <Loader />
                         ) : (
                             <button
-                                type="button"
-                                onChange={handleSubmit}
+                                type="submit"
+                                onClick={handleSubmit}
                                 className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-full cursor-pointer"
                             >
                                 Send Now
