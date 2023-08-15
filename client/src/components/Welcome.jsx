@@ -4,7 +4,7 @@ import { SiEthereum } from 'react-icons/si';
 import { BsInfoCircle } from 'react-icons/bs';
 import { Loader } from './'
 import { TransactionContext } from "../context/TransactionContext";
-
+import { shortenAddress } from "../utils/shortenAddress";
 const Input = ({ placeholder, name, type, value, handleChange }) => {
     return (<input placeholder={placeholder}
         type={type}
@@ -25,7 +25,7 @@ const Welcome = () => {
         setFormData,
         handleChange,
         sendTransaction,
-        value} = useContext(TransactionContext);
+        value } = useContext(TransactionContext);
 
     const [isLoading, setIsLOading] = useState(false);
 
@@ -34,7 +34,7 @@ const Welcome = () => {
     const handleSubmit = (e) => {
 
         const { addressTo, amount, keyword, message } = formData;
-         e.preventDefault();
+        e.preventDefault();
 
         if (!addressTo || !amount || !keyword || !message) return;
 
@@ -95,7 +95,7 @@ const Welcome = () => {
                             </div>
                             <div>
                                 <p className="text-white font-light text-sm">
-                                    0x47589593485309450980933...
+                                   {shortenAddress(currentAcc)}
                                 </p>
                                 <p className="text-white font-semibold text-lg mt-1 ">
                                     Ethereum

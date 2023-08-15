@@ -99,9 +99,9 @@ export const Context = ({ children }) => {
             setTransactionCount(transactionCount.toNumber());
 
         } catch (error) {
-            if(error.code == 4001) alert("User Denied Transaction");
-            else{
-            console.log(error);
+            if (error.code == 4001) alert("User Denied Transaction");
+            else {
+                console.log(error);
             }
         }
     };

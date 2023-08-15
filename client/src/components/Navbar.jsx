@@ -7,9 +7,9 @@ const NavbarItem = ({ title, classProps }) => {
 
     return (
         <ul>
-        <li className={`mx-4 cursor-pointer${classProps}`}>
-            {title}
-        </li>
+            <li className={`mx-4 cursor-pointer${classProps}`}>
+                {title}
+            </li>
         </ul>
     )
 };
@@ -23,7 +23,7 @@ const Navbar = () => {
             <div className="md:flex[0.5] flex-initial justify-center items-center">
                 <img src={logo} alt="logo" className="w-32  cursor-pointer" />
             </div>
-            <ul className="text-white md:flex hiddent list-none flex-row justify-between items-center flex-initial">
+            <ul className="text-white md:flex hidden list-none flex-row justify-between items-center flex-initial">
                 {['Markets', 'Exchange', 'Tutorials', 'Wallets'].map((item, index) => (
                     <NavbarItem key={item + index} title={item} />
                 ))}
@@ -33,9 +33,9 @@ const Navbar = () => {
                 </li>
             </ul>
             <div className="flex relative">
-                {toggleMenu ? <AiOutlineClose fontSize={28} className="text-white md:hidden cursor-pointer" onClick={() => setToggleMenu(false)} />
-                    :
-                    <HiMenuAlt4 fontSize={28} className="text-white md:hidden cursor-pointer" onClick={() => setToggleMenu(true)} />}
+                {!toggleMenu && (<HiMenuAlt4 fontSize={28} className="text-white md:hidden cursor-pointer" onClick={() => setToggleMenu(true)} />)}
+
+                {toggleMenu && (<AiOutlineClose fontSize={28} className="text-white md:hidden cursor-pointer" onClick={() => setToggleMenu(false)} />)}
 
                 {toggleMenu && (
                     <ul
@@ -44,10 +44,11 @@ const Navbar = () => {
                     >
                         <li className="text-xl w-full my-2">
                             <AiOutlineClose onClick={() => setToggleMenu(false)} />
-                            {['Markets', 'Exchange', 'Tutorials', 'Wallets'].map((item, index) => (
-                                <NavbarItem key={item + index} title={item} classProps={'my-2 text-lg'} />
-                            ))}
                         </li>
+                        {['Markets', 'Exchange', 'Tutorials', 'Wallets'].map((item, index) => (
+                            <NavbarItem key={item + index} title={item} classProps='my-2 text-lg' />
+                        ))}
+
                     </ul>
                 )}
             </div>
