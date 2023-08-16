@@ -15,9 +15,9 @@ const getEthereumContract = () => {
 
 export const Context = ({ children }) => {
 
-    const [isLoading, setIsLodaing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [transactionCount, setTransactionCount] = useState(localStorage.getItem('transactionCount'));
-    const [connectedAcc, setConnectedAcc] = useState('');
+    const [transactions, setTransaction] = useState([])
     const [currentAcc, setCurrentAcc] = useState('');
     const [formData, setFormData] = useState({
         addressTo: '',
@@ -52,6 +52,49 @@ export const Context = ({ children }) => {
         }
     };
 
+
+    const getAllTransaction = async () => {
+
+        try {
+
+            if (!ethereum) return alert("Please install Metamask");
+            const transactionContract = getEthereumContract();
+            const availableTransaction = await transactionContract.getAllTransactions();
+            const structuredTransaction = availableTransaction.map((t) => ({
+                addressTo: t.receiver,
+                addressFrom: t.sender,
+                timestamp: new Date(t.timestamp.toNumber() * 1000).toLocaleString(),
+                message: t.message,
+                keyword: t.keyword,
+                amount: parseInt(t.amount._hex)/(10**18)
+            }));
+
+            setTransaction(structuredTransaction);
+            console.log("Transactions", structuredTransaction);
+
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const checkIfTransactionsExist = async () => {
+
+        try {
+            const transactionContract = getEthereumContract();
+            const transactionsCount = await transactionContract.getTransactionCount();
+
+            window.localStorage.setItem("transactionCount", transactionsCount);
+
+        } catch (error) {
+            console.log(error);
+
+            // throw new Error("No ethereum Object");
+        }
+
+    }
+
     const checkIfWalletIsConnected = async () => {
         try {
             if (!ethereum) {
@@ -61,6 +104,8 @@ export const Context = ({ children }) => {
             console.log(accounts);
             if (accounts.length) {
                 setCurrentAcc(accounts[0]);
+                getAllTransaction();
+
             } else {
                 console.log("No Accounts Found!")
             }
@@ -88,10 +133,10 @@ export const Context = ({ children }) => {
 
             const transactionHash = await transactionContract.addToBlockchain(addressTo, parsedAmount, message, keyword);
 
-            setIsLodaing(true);
+            setIsLoading(true);
             console.log(`Loading - ${transactionHash.hash}`);
             await transactionHash.wait();
-            setIsLodaing(false);
+            setIsLoading(false);
             console.log(`Success - ${transactionHash.hash}`);
 
             const transactionCount = await transactionContract.getTransactionCount();
@@ -108,6 +153,7 @@ export const Context = ({ children }) => {
 
     useEffect(() => {
         checkIfWalletIsConnected();
+        checkIfTransactionsExist();
     }, []);
 
     return (
@@ -118,7 +164,9 @@ export const Context = ({ children }) => {
             setFormData,
             handleChange,
             sendTransaction,
-            value
+            value,
+            transactions,
+            isLoading
         }}>
             {children}
         </TransactionContext.Provider>

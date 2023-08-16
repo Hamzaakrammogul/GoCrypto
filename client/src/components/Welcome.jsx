@@ -25,9 +25,9 @@ const Welcome = () => {
         setFormData,
         handleChange,
         sendTransaction,
+        isLoading,
         value } = useContext(TransactionContext);
 
-    const [isLoading, setIsLOading] = useState(false);
 
     const commonStyles = 'min-h-[70px] sm:px-0 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-white ';
 
@@ -95,7 +95,7 @@ const Welcome = () => {
                             </div>
                             <div>
                                 <p className="text-white font-light text-sm">
-                                   {shortenAddress(currentAcc)}
+                                    {shortenAddress(currentAcc)}
                                 </p>
                                 <p className="text-white font-semibold text-lg mt-1 ">
                                     Ethereum
@@ -113,17 +113,15 @@ const Welcome = () => {
                         <Input placeholder="Enter message" name="message" type="text" handleChange={handleChange} />
 
                         <div className="h-[1px] w-full bg-gray-400 my-2" />
-                        {isLoading ? (
-                            <Loader />
-                        ) : (
-                            <button
+                        {isLoading ? (<Loader />) :
+                            (<button
                                 type="submit"
                                 onClick={handleSubmit}
                                 className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-full cursor-pointer"
                             >
                                 Send Now
                             </button>
-                        )}
+                            )}
                     </div>
 
                 </div>
